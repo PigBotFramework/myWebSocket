@@ -2,7 +2,7 @@ import websocket, json, requests, traceback
 
 CLIENT_ID = "123"
 CLIENT_SECRET = "123"
-HTTP_URL = "http://127.0.0.1:5700"
+HTTP_URL = "http://173.82.136.177:4376"
 
 class myWebSocket:
     def __init__(self, client_id, client_secret, client_url="wss://socket.xzynb.top/ws"):
@@ -35,7 +35,9 @@ if __name__ == "__main__":
             if recv.get("type") == "execute":
                 name = recv.get("data").get("name")
                 params = recv.get("data").get("params")
-                ws.send("return", requests.post(f"{HTTP_URL}/{name}", params).json(), recv.get("flag"))
+                data = requests.post(f"{HTTP_URL}/{name}", params).json()
+                data['flag'] = recv.get("flag")
+                ws.send("return", data, recv.get("flag"))
         except Exception as e:
             print("There is an error:"+str(e))
             ws.send("error", {"msg":str(e),"detail":traceback.format_exc()}, recv.get("flag"))
